@@ -1,0 +1,258 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Import libraries\n",
+    "import pandas as pd\n",
+    "import numpy as np\n",
+    "import csv\n",
+    "import os"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 136,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "There are 576 unique users\n"
+     ]
+    }
+   ],
+   "source": [
+    "#Read in file\n",
+    "Hero_file = '/Users/Dan/Desktop/GIT_Homework/Homework/Heros_of_Pymoli/Heros.csv'\n",
+    "\n",
+    "#Determine number of unique users\n",
+    "Heros_file = pd.read_csv(Hero_file)\n",
+    "\n",
+    "#rename column header(s)\n",
+    "Heros_file = Heros_file.rename(columns={\"SN\":\"Screen_name\"})\n",
+    "\n",
+    "Users = len(Heros_file[\"Screen_name\"].unique())\n",
+    "print(\"There are\", Users, \"unique users\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 143,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Male                     652\n",
+       "Female                   113\n",
+       "Other / Non-Disclosed     15\n",
+       "Name: Gender, dtype: int64"
+      ]
+     },
+     "execution_count": 143,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Heros_file['Gender'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 137,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Unique Items</th>\n",
+       "      <th>Average Price</th>\n",
+       "      <th>Number of purchases</th>\n",
+       "      <th>Total revenue</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>179</td>\n",
+       "      <td>$3.05</td>\n",
+       "      <td>780</td>\n",
+       "      <td>$2379.77</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   Unique Items Average Price  Number of purchases Total revenue\n",
+       "0           179         $3.05                  780      $2379.77"
+      ]
+     },
+     "execution_count": 137,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#Calculate and display average purchase price for the df\n",
+    "Items = len(Heros_file[\"Item Name\"].unique())\n",
+    "#print(\"There are\", Items, \"unique items\")\n",
+    "average_price = \"$\" + \"%0.2f\" %Heros_file[\"Price\"].mean()\n",
+    "#print (\"Average price per item is: $\" + \"%0.2f\" %average_price)\n",
+    "num_of_buys = len(Heros_file[\"Purchase ID\"].value_counts())\n",
+    "#print(\"There were\", num_of_buys, \"purchases\")\n",
+    "revenue = \"$\" + \"%0.2f\" %Heros_file[\"Price\"].sum()\n",
+    "#print(\"Total revenue was $\", revenue)\n",
+    "purchasing_df = pd.DataFrame({\"Unique Items\":[Items],\n",
+    "                              \"Average Price\":[average_price],\n",
+    "                              \"Number of purchases\":[num_of_buys],\n",
+    "                              \"Total revenue\":[revenue]})\n",
+    "purchasing_df"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 158,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Gender category</th>\n",
+       "      <th>Number of</th>\n",
+       "      <th>Percentage</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Male</td>\n",
+       "      <td>484</td>\n",
+       "      <td>84.03</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Female</td>\n",
+       "      <td>81</td>\n",
+       "      <td>14.06</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Other / Non-disclosed</td>\n",
+       "      <td>11</td>\n",
+       "      <td>1.91</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "         Gender category  Number of Percentage\n",
+       "0                   Male        484      84.03\n",
+       "1                 Female         81      14.06\n",
+       "2  Other / Non-disclosed         11       1.91"
+      ]
+     },
+     "execution_count": 158,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#calculate gender of players\n",
+    "male_df = Heros_file.loc[Heros_file[\"Gender\"]==\"Male\", :]\n",
+    "female_df = Heros_file.loc[Heros_file[\"Gender\"]==\"Female\", :]\n",
+    "other_df = Heros_file.loc[Heros_file[\"Gender\"]==\"Other / Non-Disclosed\", :]\n",
+    "unique_males = len(male_df[\"Screen_name\"].unique())\n",
+    "unique_other = len(other_df[\"Screen_name\"].unique())\n",
+    "unique_females = len(female_df[\"Screen_name\"].unique())\n",
+    "\n",
+    "gender_df = pd.DataFrame({\"Gender category\":[\"Male\", \"Female\", \"Other / Non-disclosed\"],\n",
+    "                         \"Number of\":[unique_males, unique_females, unique_other],\n",
+    "                         \"Percentage\":[\"%0.2f\" %(unique_males * 100/Users), \"%0.2f\" %(unique_females*100/Users), \"%0.2f\" %(unique_other*100/Users)]})\n",
+    "#revenue = \"$\" + \"%0.2f\" %Heros_file[\"Price\"].sum()\n",
+    "gender_df\n",
+    "\n",
+    "#List_of_users = Heros_file[\"Screen_name\"].unique()\n",
+    "#Gender_df = pd.DataFrame({\"Screen Name\":[Gender_df['Screen Name']]})\n",
+    "#grouped_international_data = clean_ufo_df.groupby(['country', 'state'])\n",
+    "\n",
+    "\n",
+    "\n",
+    "#total_players = Heros_org['Screen_name'].value_counts()\n",
+    "#total_players\n",
+    "#unique_df = Heros_org['Item Name'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.0"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
